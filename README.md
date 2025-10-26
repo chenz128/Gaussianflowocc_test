@@ -5,8 +5,9 @@
 [Simon Boeder](https://scholar.google.de/citations?user=eEsebSgAAAAJ)<sup>1,2</sup>, [Fabian Gigengack](https://scholar.google.de/citations?user=_Zk9J1MAAAAJ)<sup>1</sup>, [Benjamin Risse](https://scholar.google.de/citations?user=rWx-1t0AAAAJ)<sup>2</sup><br>
 <sup>1</sup>Bosch Research, <sup>2</sup>University of Münster
 
-[**ICCV 2025**]()
+[**ICCV 2025**](https://openaccess.thecvf.com/content/ICCV2025/html/Boeder_GaussianFlowOcc_Sparse_and_Weakly_Supervised_Occupancy_Estimation_using_Gaussian_Splatting_ICCV_2025_paper.html)
 
+[![PDF](https://img.shields.io/badge/PDF-ICCV%202025-blue)](https://openaccess.thecvf.com/content/ICCV2025/html/Boeder_GaussianFlowOcc_Sparse_and_Weakly_Supervised_Occupancy_Estimation_using_Gaussian_Splatting_ICCV_2025_paper.html)
 [![arXiv](https://img.shields.io/badge/arXiv-2502.17288-red)](https://arxiv.org/abs/2502.17288)
 </div>
 
