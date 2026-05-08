@@ -14,8 +14,36 @@ from nuscenes.utils.geometry_utils import view_points
 from pyquaternion import Quaternion
 from shapely.geometry import MultiPoint, box
 
-from mmdet3d.core.bbox import points_cam2img
-from mmdet3d.datasets import NuScenesDataset
+# Inlined from mmdet3d to avoid heavy dependency chain
+def points_cam2img(points_3d, proj_mat, with_depth=False):
+    """Project points in camera coordinates to image coordinates."""
+    points_num = points_3d.shape[0]
+    pts_4d = np.concatenate([points_3d, np.ones((points_num, 1))], axis=-1)
+    pts_2d = pts_4d @ proj_mat.T
+    pts_2d[:, :2] /= pts_2d[:, 2:3]
+    if with_depth:
+        return pts_2d
+    return pts_2d[:, :2]
+
+# NuScenesDataset only used for NameMapping - inlined from mmdet3d
+class NuScenesDataset:
+    NameMapping = {
+        'movable_object.barrier': 'barrier',
+        'vehicle.bicycle': 'bicycle',
+        'vehicle.bus.bendy': 'bus',
+        'vehicle.bus.rigid': 'bus',
+        'vehicle.car': 'car',
+        'vehicle.construction': 'construction_vehicle',
+        'vehicle.motorcycle': 'motorcycle',
+        'human.pedestrian.adult': 'pedestrian',
+        'human.pedestrian.child': 'pedestrian',
+        'human.pedestrian.construction_worker': 'pedestrian',
+        'human.pedestrian.police_officer': 'pedestrian',
+        'movable_object.trafficcone': 'traffic_cone',
+        'vehicle.trailer': 'trailer',
+        'vehicle.truck': 'truck',
+    }
+    DefaultAttribute = {}
 
 nus_categories = ('car', 'truck', 'trailer', 'bus', 'construction_vehicle',
                   'bicycle', 'motorcycle', 'pedestrian', 'traffic_cone',
