@@ -128,7 +128,7 @@ def show_mask(mask, image, phrases, logits, random_color=True, separate=False, v
 
     phrase_class = torch.tensor([0]+ [class_map[flattened(vocabulary, for_separate=separate).index(p)] for p in phrases], device=device)
     class_mask = phrase_class[idx_mask]
-    v1_class_mask = nusc_v2_to_v1[class_mask]
+    v1_class_mask = nusc_v2_to_v1[class_mask.cpu()]
     
     if visual:
         mask_image = color_map[v1_class_mask.cpu()][..., :3]
