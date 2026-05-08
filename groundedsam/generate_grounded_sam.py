@@ -257,7 +257,8 @@ if __name__ == "__main__":
     parser.add_argument("--single-gpu", action='store_true')
     parser.add_argument("--max-size", type=int, default=800)
     parser.add_argument("--scene-prefixes", nargs='+', default=None)
-    args = parser.parse_args()
+    args, _ = parser.parse_known_args()  # ignore --local-rank from torch.distributed.launch
+    args.local_rank = int(os.environ.get('LOCAL_RANK', args.local_rank))
 
     with torch.no_grad():
         torch.cuda.set_device(args.local_rank)
