@@ -5,6 +5,7 @@
 import pickle
 import argparse
 import numpy as np
+from tqdm import tqdm
 from nuscenes import NuScenes
 from nuscenes.utils.data_classes import Box
 from pyquaternion import Quaternion
@@ -109,9 +110,7 @@ def add_ann_adj_info(extra_tag, dataroot, out_path, nuscenes_version):
     for set in ['train', 'val']:
         dataset = pickle.load(
             open('%s/%s_infos_%s.pkl' % (out_path, extra_tag, set), 'rb'))
-        for id in range(len(dataset['infos'])):
-            if id % 10 == 0:
-                print('%d/%d' % (id, len(dataset['infos'])))
+        for id in tqdm(range(len(dataset['infos'])), desc=f'add_ann_adj_info [{set}]'):
             info = dataset['infos'][id]
             # get sweep adjacent frame info
             sample = nuscenes.get('sample', info['token'])
