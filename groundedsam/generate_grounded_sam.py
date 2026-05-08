@@ -259,6 +259,8 @@ if __name__ == "__main__":
     parser.add_argument("--scene-prefixes", nargs='+', default=None)
     args, _ = parser.parse_known_args()  # ignore --local-rank from torch.distributed.launch
     args.local_rank = int(os.environ.get('LOCAL_RANK', args.local_rank))
+    world_rank = int(os.environ.get('RANK', args.local_rank))
+    world_size = int(os.environ.get('WORLD_SIZE', 1))
 
     with torch.no_grad():
         torch.cuda.set_device(args.local_rank)
@@ -267,6 +269,7 @@ if __name__ == "__main__":
         else:
             dist.init_process_group(backend='nccl') 
         device = torch.device("cuda", args.local_rank)
+        print(f'[rank {world_rank}/{world_size}] local_rank={args.local_rank} dist.get_rank()={dist.get_rank()} dist.get_world_size()={dist.get_world_size()}', flush=True)
 
         data_path = 'data/nuscenes'
         version = args.version
@@ -277,8 +280,9 @@ if __name__ == "__main__":
             nusc_data = pickle.load(f)['infos']
         
         nusc_dataset = NuscenesDataset(list(range(len(nusc_data))))
-        train_sampler = DistributedSampler(nusc_dataset, shuffle=False)
+        train_sampler = DistributedSampler(nusc_dataset, num_replicas=world_size, rank=world_rank, shuffle=False)
         trainloader = DataLoader(nusc_dataset, batch_size=1, num_workers=4, sampler=train_sampler)
+        print(f'[rank {world_rank}] dataset size: {len(nusc_data)}, per-rank samples: {len(train_sampler)}, dataloader len: {len(trainloader)}', flush=True)
 
         ckpt_repo_id = "ShilongLiu/GroundingDINO"
         ckpt_filenmae = "groundingdino_swinb_cogcoor.pth"
