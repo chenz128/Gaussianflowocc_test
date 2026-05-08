@@ -51,10 +51,14 @@ scenes = [s for s in nusc.scene if any([s['name'].startswith(prefix) for prefix 
 model = torch.hub.load('yvanyin/metric3d', args.model, pretrain=True)
 model.cuda().eval()
 
-for scene in tqdm(scenes):
+for scene in tqdm(scenes, desc='Scenes', unit='scene'):
     sample_token = scene['first_sample_token']
     scene_path = os.path.join(target_path, scene['name'])
     os.makedirs(scene_path, exist_ok=True)
+
+    # count samples in this scene for inner progress bar
+    sample_count = nusc.get('scene', scene['token'])['nbr_samples']
+    pbar = tqdm(total=sample_count, desc=scene['name'], unit='sample', leave=False)
 
     while sample_token != '':
         sample = nusc.get('sample', sample_token)
@@ -62,6 +66,7 @@ for scene in tqdm(scenes):
         # Skip if file exists
         if not args.overwrite and os.path.exists(os.path.join(scene_path, sample_token + '.npy')):
             sample_token = sample['next']
+            pbar.update(1)
             continue
 
         intrinsics = np.array([np.array(nusc.get('calibrated_sensor', nusc.get('sample_data', 
@@ -90,3 +95,6 @@ for scene in tqdm(scenes):
 
         # get next sample
         sample_token = sample['next']
+        pbar.update(1)
+
+    pbar.close()
