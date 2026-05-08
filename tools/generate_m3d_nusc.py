@@ -18,8 +18,12 @@ parser.add_argument('--scene-prefix', nargs='+', default=['scene'])
 parser.add_argument('--model', default='metric3d_vit_large')
 parser.add_argument('--overwrite', action='store_true')
 parser.add_argument('--target-dir', default='metric_3d_nusc')
+parser.add_argument('--start', type=int, default=0, help='start scene index (inclusive)')
+parser.add_argument('--end', type=int, default=-1, help='end scene index (exclusive), -1 means all')
+parser.add_argument('--gpu', type=int, default=0, help='GPU index to use')
 
 args = parser.parse_args()
+os.environ['CUDA_VISIBLE_DEVICES'] = str(args.gpu)
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 # Metadata
@@ -46,6 +50,9 @@ std = torch.tensor([58.395, 57.12, 57.375]).float()[None, :, None, None]
 # Prepare Dataset
 nusc = NuScenes(version=args.version, dataroot=os.path.join(args.root, 'nuscenes'), verbose=True)
 scenes = [s for s in nusc.scene if any([s['name'].startswith(prefix) for prefix in args.scene_prefix])]
+end_idx = args.end if args.end != -1 else len(scenes)
+scenes = scenes[args.start:end_idx]
+print(f'Processing scenes [{args.start}:{end_idx}] ({len(scenes)} scenes) on GPU {args.gpu}')
 
 # Prepare Model
 model = torch.hub.load('yvanyin/metric3d', args.model, pretrain=True)
