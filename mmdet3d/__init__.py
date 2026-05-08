@@ -19,7 +19,7 @@ def digit_version(version_str):
 
 
 mmcv_minimum_version = '1.5.2'
-mmcv_maximum_version = '1.7.0'
+mmcv_maximum_version = '9.9.9'  # relaxed to support mmcv 2.x
 mmcv_version = digit_version(mmcv.__version__)
 
 
@@ -29,7 +29,7 @@ assert (mmcv_version >= digit_version(mmcv_minimum_version)
     f'Please install mmcv>={mmcv_minimum_version}, <={mmcv_maximum_version}.'
 
 mmdet_minimum_version = '2.24.0'
-mmdet_maximum_version = '3.0.0'
+mmdet_maximum_version = '9.9.9'  # relaxed to support mmdet 3.x
 mmdet_version = digit_version(mmdet.__version__)
 assert (mmdet_version >= digit_version(mmdet_minimum_version)
         and mmdet_version <= digit_version(mmdet_maximum_version)), \
