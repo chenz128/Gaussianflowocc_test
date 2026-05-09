@@ -335,7 +335,9 @@ if __name__ == "__main__":
                 elif args.method == 'combined':
                     mask = generate_semantic_combined(groundingdino_model, sam_predictor, args.local_rank, image_filename=image_filename, device=device, save_name=f'{cam}_{token}', visual=args.visual)
 
-                mask = mask.numpy().astype(np.int8) # 900, 1600
+                if isinstance(mask, torch.Tensor):
+                    mask = mask.cpu().numpy()
+                mask = mask.astype(np.int8) # 900, 1600
                 all_masks.append(mask)
             
             all_masks = np.stack(all_masks)
